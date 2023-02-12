@@ -1,0 +1,297 @@
+Now, Cherry-pick the killer fix from MOM elm into MOM oak:
+
+Recall, I already cherry-picked the submodule SON elm into SON oak:
+
+Done, in son:
+
+git checkout oak
+
+git cherry-pick -x elm
+
+git push
+
+git log
+commit 5540710ce040a2a50dd0b09ef5560bb7461f1c58 (HEAD -> oak, origin/oak)
+Author: IneffablePerformativity <IneffablePerformativity@gmail.com>
+Date:   Sun Feb 12 10:48:59 2023 -0600
+
+    Added the killer-fix-son into son elm on 2196...
+
+    (cherry picked from commit 9092e11deb4348d9eebdddab4045e897fbff6680)
+
+=========== so, the hard part is to do this in mom ===========
+
+in mom:
+
+git checkout oak
+==>
+M       son
+Branch 'oak' set up to track remote branch 'oak' from 'origin'.
+Switched to a new branch 'oak'
+
+Soooo, I need to clean up that son first, although it has my desired change...
+
+git submodule update --init --recursive
+==>
+
+git status
+===>
+On branch oak
+Your branch is up to date with 'origin/oak'.
+
+nothing to commit, working tree clean
+
+================= SO, THE CHOICE IS.....
+
+1. Do I place the desired son commit under mom, and add it?
+-- I think then I have TWO contradictory sons, cannot reconcile.
+
+2. Do I cherry pick the mom (elm) that had the killer son commit?
+-- leaning now toward this choice!
+
+
+I believe I left tip of mom/elm branch at desired fix,
+or was it back one?
+
+an aside.....
+
+:~/repo/mom/son$ git checkout elm
+Switched to branch 'elm'
+Your branch is up to date with 'origin/elm'.
+:~/repo/mom/son$ git log -n 2
+commit 9092e11deb4348d9eebdddab4045e897fbff6680 (HEAD -> elm, origin/elm)
+Author: IneffablePerformativity <IneffablePerformativity@gmail.com>
+Date:   Sun Feb 12 10:48:59 2023 -0600
+
+    Added the killer-fix-son into son elm on 2196...
+
+commit 2196a76425e3431a23a64d0bd2cf0cfd01291550
+Author: IneffablePerformativity <IneffablePerformativity@gmail.com>
+Date:   Sun Feb 12 10:21:49 2023 -0600
+
+    Really, this time, adding yet-another-file
+:~/repo/mom/son$ git checkout oak
+Switched to branch 'oak'
+Your branch is up to date with 'origin/oak'.
+:~/repo/mom/son$
+
+Ready...
+
+git cherry-pick -x elm
+==>
+On branch oak
+Your branch is up to date with 'origin/oak'.
+
+You are currently cherry-picking commit 9092e11.
+  (all conflicts fixed: run "git cherry-pick --continue")
+  (use "git cherry-pick --skip" to skip this patch)
+  (use "git cherry-pick --abort" to cancel the cherry-pick operation)
+
+nothing to commit, working tree clean
+The previous cherry-pick is now empty, possibly due to conflict resolution.
+If you wish to commit it anyway, use:
+
+    git commit --allow-empty
+
+Otherwise, please use 'git cherry-pick --skip'
+
+So.... continuing immediately with the suggestion....
+
+git commit --allow-empty
+==>
+[oak 26fc2b4] Added the killer-fix-son into son elm on 2196...
+ Date: Sun Feb 12 10:48:59 2023 -0600
+ 
+ ===== I think I got it!!! ======
+ 
+git push
+==>
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 269 bytes | 269.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:IneffablePerformativity/son.git
+   129d50f..26fc2b4  oak -> oak
+   
+QED!
+Go see if it looks thus on Github graph.
+
+=====================================
+=================== Oh no, F#)$%*)!!!
+I am in the son subfolder ===========
+=====================================
+
+But that is N.P.
+The ELM MOM still has the exact KILLER FIX SON.
+
+go back up one, and repeat these steps....
+
+cd ..
+
+git submodule update --init --recursive
+==>
+Submodule path 'son': checked out '3dba509ac303405cc89921dff4f86c6c3283726c'
+
+git status
+==>
+On branch oak
+Your branch is up to date with 'origin/oak'.
+
+nothing to commit, working tree clean
+
+Again, just to check the log of mom - elm:
+
+git checkout elm
+
+git log -n 3 >> ~/lo
+==>
+commit c3438ef4ba0ab1fcdb53b19b557b5a8ff8c03778
+Author: IneffablePerformativity <IneffablePerformativity@gmail.com>
+Date:   Sun Feb 12 11:04:12 2023 -0600
+
+    A little history up to this point, as mom incorporates the son killer fix.
+
+.... blah blah ...
+
+    So, back in mom, will need add son/cmt/push
+
+commit 95144857e36e7dc33ee274c4751c44d004e917ae
+Author: IneffablePerformativity <IneffablePerformativity@gmail.com>
+Date:   Sun Feb 12 10:23:02 2023 -0600
+
+    had to git add son, because mom status was M son
+
+
+So, the desired ELM MOM with ELM SON KILLER FIX, is 9514... == that branch^ (up one).
+
+Finally, what is my desired command?
+
+in mom:
+
+git checkout oak
+
+git submodule update --init --recursive
+
+git cherry-pick -x elm^
+==>
+Failed to merge submodule son (commits don't follow merge-base)
+CONFLICT (submodule): Merge conflict in son
+error: could not apply 9514485... had to git add son, because mom status was M son
+hint: After resolving the conflicts, mark them with
+hint: "git add/rm <pathspec>", then run
+hint: "git cherry-pick --continue".
+hint: You can instead skip this commit with "git cherry-pick --skip".
+hint: To abort and get back to the state before "git cherry-pick",
+hint: run "git cherry-pick --abort".
+
+
+============= THAT's MY PROBLEM! =============
+
+git status
+-->
+On branch oak
+Your branch is up to date with 'origin/oak'.
+
+You are currently cherry-picking commit 9514485.
+  (fix conflicts and run "git cherry-pick --continue")
+  (use "git cherry-pick --skip" to skip this patch)
+  (use "git cherry-pick --abort" to cancel the cherry-pick operation)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+        both modified:   son
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+=======================================
+So, how to resolve the conflict in son?....
+=======================================
+
+What is my current unacceptable state in son?
+
+cd son
+git status
+==>
+HEAD detached at 3dba509
+nothing to commit, working tree clean
+
+So acheive ANY OTHER hash:
+
+git checkout elm
+
+git log
+==>
+commit 9092e11deb4348d9eebdddab4045e897fbff6680 (HEAD -> elm, origin/elm)
+Author: IneffablePerformativity <IneffablePerformativity@gmail.com>
+Date:   Sun Feb 12 10:48:59 2023 -0600
+
+    Added the killer-fix-son into son elm on 2196...
+
+========= go back up and continue the c.p. ========
+
+cd ..
+
+uhhh...
+git cherry-pick --continue
+but wait....
+
+git status
+===>
+On branch oak
+Your branch is up to date with 'origin/oak'.
+
+You are currently cherry-picking commit 9514485.
+  (fix conflicts and run "git cherry-pick --continue")
+  (use "git cherry-pick --skip" to skip this patch)
+  (use "git cherry-pick --abort" to cancel the cherry-pick operation)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+        both modified:   son
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+=========== THAT DOES NOT LOOK GOOD! BOTH SONS ARE CHANGED!
+
+
+git add son
+
+Well....
+
+git status
+==>
+On branch oak
+Your branch is up to date with 'origin/oak'.
+
+You are currently cherry-picking commit 9514485.
+  (all conflicts fixed: run "git cherry-pick --continue")
+  (use "git cherry-pick --skip" to skip this patch)
+  (use "git cherry-pick --abort" to cancel the cherry-pick operation)
+
+Changes to be committed:
+        modified:   son
+		
+git cherry-pick --continue
+==>
+[oak 69f6f79] had to git add son, because mom status was M son
+ Date: Sun Feb 12 10:23:02 2023 -0600
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ 
+git push
+==>
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 331 bytes | 331.00 KiB/s, done.
+Total 2 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To github.com:IneffablePerformativity/mom.git
+   414e109..69f6f79  oak -> oak
+   
+===============================================
+========== WOW! QED! ~ ONE WEEK LATER =========
+===============================================
+
+
+
