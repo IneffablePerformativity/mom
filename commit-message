@@ -1,0 +1,164 @@
+A little history up to this point, as mom incorporates the son killer fix.
+
+
+git checkout main
+git checkout -b elm
+touch elm-branch-of-mom
+git add .
+git commit -m "branched elm in mom, added file elm-branch-of-mom"
+touch "making-progress"
+git add .
+git commit -m "added file making-progress to elm branch of mom."
+git push
+git push --set-upstream origin elm
+
+
+mkdir repo
+cd repo
+git clone git@github.com:IneffablePerformativity/mom.git
+
+If you already cloned the project and forgot --recurse-submodules, you can combine the git submodule init and git submodule update steps by running git submodule update --init. To also initialize, fetch and checkout any nested submodules, you can use the foolproof git submodule update --init --recursive.
+
+git submodule update --init --recursive
+
+So now I find both mom and son are back on main,
+(but son says detached head!)
+
+
+in mom:
+
+git checkout main
+git checkout -b oak
+touch oak-branch-of-mom
+git add .
+git commit -m "branched oak in mom, added file oak-branch-of-mom"
+touch "making-more-progress"
+git add .
+git commit -m "added file making-more-progress to oak branch of mom."
+git push --set-upstream origin oak
+
+
+
+Similar  now in son:
+
+
+git checkout main
+git checkout -b oak
+touch oak-branch-of-son
+git add .
+git commit -m "branched oak in son, added file oak-branch-of-son"
+touch "to-have-a-commit"
+git add .
+git commit -m "added file to-have-a-commit to oak branch of son."
+git push --set-upstream origin oak
+
+
+
+================= MOVING ON TO THE CHERRY-PICK SCENARIO =================
+
+
+mkdir repo
+cd repo
+git clone --recurse-submodules git@github.com:IneffablePerformativity/mom.git
+==>>>
+
+:~/repo$ git clone --recurse-submodules git@github.com:IneffablePerformativity/mom.git
+Cloning into 'mom'...
+remote: Enumerating objects: 25, done.
+remote: Counting objects: 100% (25/25), done.
+remote: Compressing objects: 100% (19/19), done.
+remote: Total 25 (delta 9), reused 16 (delta 4), pack-reused 0
+Receiving objects: 100% (25/25), 4.22 KiB | 2.11 MiB/s, done.
+Resolving deltas: 100% (9/9), done.
+Submodule 'son' (git@github.com:IneffablePerformativity/son.git) registered for path 'son'
+Cloning into '/home/ajs/repo/mom/son'...
+remote: Enumerating objects: 15, done.
+remote: Counting objects: 100% (15/15), done.
+remote: Compressing objects: 100% (11/11), done.
+Receiving objects: 100% (15/15), done.
+Resolving deltas: 100% (4/4), done.
+remote: Total 15 (delta 4), reused 10 (delta 1), pack-reused 0
+Submodule path 'son': checked out 'dea556e1081534506f06a087d9afa893d2ff2856'
+
+Back up in mom:
+
+:~/repo/mom$ git checkout elm
+M       son
+Branch 'elm' set up to track remote branch 'elm' from 'origin'.
+Switched to a new branch 'elm'
+:~/repo/mom$ git status
+On branch elm
+Your branch is up to date with 'origin/elm'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   son (new commits)
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+============== CHOICES =================
+
+I can update mom as per son sitting there with fix.
+
+Or
+
+I can clean up mom using a submodule...
+
+Probably perversely, I would rather try that:
+
+git submodule update --init --recursive
+
+Hmmm...
+
+:~/repo/mom$ git submodule update --init --recursive
+Submodule path 'son': checked out '2196a76425e3431a23a64d0bd2cf0cfd01291550'
+
+2196 is the hash that I BUILD KILLER FIX upon!
+
+-- But it is NOT the latest hash, even of the son elm branch.
+
+So, I must do something to update the son elm to the killer fix....
+
+Pull?
+
+:~/repo/mom/son$ git pull
+You are not currently on a branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
+
+    git pull <remote> <branch>
+	
+No. How about checkout?
+
+So where am I?
+:~/repo/mom/son$ git log
+commit 2196a76425e3431a23a64d0bd2cf0cfd01291550 (HEAD)
+Author: IneffablePerformativity <IneffablePerformativity@gmail.com>
+Date:   Sun Feb 12 10:21:49 2023 -0600
+....
+
+I am NOT even on elm yet. So...
+
+git checkout elm
+==>
+
+:~/repo/mom/son$ git checkout elm
+Previous HEAD position was 2196a76 Really, this time, adding yet-another-file
+Switched to branch 'elm'
+Your branch is up to date with 'origin/elm'.
+
+:~/repo/mom/son$ git log
+commit 9092e11deb4348d9eebdddab4045e897fbff6680 (HEAD -> elm, origin/elm)
+Author: IneffablePerformativity <IneffablePerformativity@gmail.com>
+Date:   Sun Feb 12 10:48:59 2023 -0600
+
+    Added the killer-fix-son into son elm on 2196...
+
+commit 2196a76425e3431a23a64d0bd2cf0cfd01291550
+...
+
+So, back in mom, will need add son/cmt/push
+
+
